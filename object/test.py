@@ -59,7 +59,7 @@ class Draggable:
 
 
 # 드래그 객체 생성 (원본 이미지와 드롭 이미지 경로를 제공)
-draggable = Draggable('C:/Users/rlaqhdrb/Desktop/pygame/밀가루.png', 'C:/Users/rlaqhdrb/Desktop/pygame/소금.png', 100, 100, 100, 100)
+draggable = Draggable('C:/Users/rlaqhdrb/Desktop/pygame/resource/밀가루.png', 'C:/Users/rlaqhdrb/Desktop/pygame/resource/소금.png', 100, 100, 100, 100)
 
 # 게임 루프
 running = True
