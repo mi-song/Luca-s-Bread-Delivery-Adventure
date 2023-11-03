@@ -11,6 +11,27 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 # 게임 제목 설정
 pygame.display.set_caption("Drag & Drop and Change Image Demo")
 
+# Additional images list
+a1 = 'C:/Users/rlaqhdrb/Desktop/pygame/resource/크루와상 반죽.png'
+a2 = 'C:/Users/rlaqhdrb/Desktop/pygame/resource/크루와상.png'
+a3 = 'C:/Users/rlaqhdrb/Desktop/pygame/resource/크루와상2.png'
+
+additional_images = [a1, a2, a3]  # etc.
+additional_surfaces = []
+
+# Load and transform additional images
+for img_path in additional_images:
+    img = pygame.image.load(img_path)
+    additional_surfaces.append(pygame.transform.scale(img, (100, 100)))
+
+# Current index for additional images and a flag to stop cycling images
+current_index = 0
+stop_cycling = False
+
+# A simple function to draw the additional image at a fixed position
+def draw_additional_image(surface, index, position=(300, 300)):
+    surface.blit(additional_surfaces[index], position)
+
 
 # 드래그 가능한 객체 클래스
 class Draggable:
@@ -64,24 +85,51 @@ class Draggable:
 # 드래그 객체 생성 (원본 이미지와 드롭 이미지 경로를 제공)
 draggable = Draggable('C:/Users/rlaqhdrb/Desktop/pygame/resource/밀가루.png', 'C:/Users/rlaqhdrb/Desktop/pygame/resource/소금.png', 100, 100, 100, 100)
 
-# 게임 루프
+# Timer for changing the additional image
+change_image_event = pygame.USEREVENT + 1
+
+# Flag to indicate if the timer is set
+timer_set = False
+
+# Game loop
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == change_image_event and not stop_cycling:
+            # Increment the index but stop cycling after the last image
+            if current_index < len(additional_surfaces) - 1:
+                current_index += 1
+            else:
+                # Once the last image is reached, stop the cycling
+                stop_cycling = True
+                pygame.time.set_timer(change_image_event, 0)  # Stop the timer
+                timer_set = False
+
         draggable.handle_event(event)
 
-    # draggable.reset_after_delay()  # 상태를 확인하고 필요한 경우 리셋
+    # If the Draggable object is dropped and the timer is not already set, start the timer
+    if draggable.dropped and not stop_cycling and not timer_set:
+        pygame.time.set_timer(change_image_event, 1500)
+        timer_set = True
 
-    # 화면 색상 설정 (RGB)
+    # If the Draggable object has been reset, stop the timer
+    if not draggable.dragging and not draggable.dropped and timer_set:
+        pygame.time.set_timer(change_image_event, 0)
+        timer_set = False
+
+    # Fill the screen with white color
     screen.fill((255, 255, 255))
 
-    # 드래그 객체 그리기
+    # Draw the additional image
+    draw_additional_image(screen, current_index)
+
+    # Draw the draggable object
     draggable.draw(screen)
 
-    # 게임 화면 다시 그리기
+    # Update the display
     pygame.display.update()
 
-# pygame 종료
+# Quit Pygame
 pygame.quit()
