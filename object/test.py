@@ -1,5 +1,10 @@
 import pygame
 
+import sys
+sys.path.append('..')
+
+from imagepath import *
+
 # 초기화
 pygame.init()
 
@@ -83,7 +88,10 @@ class Draggable:
 
 
 # 드래그 객체 생성 (원본 이미지와 드롭 이미지 경로를 제공)
-draggable = Draggable('C:/Users/rlaqhdrb/Desktop/pygame/resource/밀가루.png', 'C:/Users/rlaqhdrb/Desktop/pygame/resource/소금.png', 100, 100, 100, 100)
+
+
+water_draggable = Draggable(water_image, pouring_water_image, 100, 100, 100, 100)
+milk_draggable = Draggable(milk_image, pouring_milk_image, 50, 50, 100, 100)
 
 # Timer for changing the additional image
 change_image_event = pygame.USEREVENT + 1
@@ -107,15 +115,26 @@ while running:
                 pygame.time.set_timer(change_image_event, 0)  # Stop the timer
                 timer_set = False
 
-        draggable.handle_event(event)
+        water_draggable.handle_event(event)
+        milk_draggable.handle_event(event)
 
     # If the Draggable object is dropped and the timer is not already set, start the timer
-    if draggable.dropped and not stop_cycling and not timer_set:
+    if water_draggable.dropped and not stop_cycling and not timer_set:
         pygame.time.set_timer(change_image_event, 1500)
         timer_set = True
 
     # If the Draggable object has been reset, stop the timer
-    if not draggable.dragging and not draggable.dropped and timer_set:
+    if not water_draggable.dragging and not water_draggable.dropped and timer_set:
+        pygame.time.set_timer(change_image_event, 0)
+        timer_set = False
+
+    # If the Draggable object is dropped and the timer is not already set, start the timer
+    if milk_draggable.dropped and not stop_cycling and not timer_set:
+        pygame.time.set_timer(change_image_event, 1500)
+        timer_set = True
+
+    # If the Draggable object has been reset, stop the timer
+    if not milk_draggable.dragging and not milk_draggable.dropped and timer_set:
         pygame.time.set_timer(change_image_event, 0)
         timer_set = False
 
@@ -126,7 +145,8 @@ while running:
     draw_additional_image(screen, current_index)
 
     # Draw the draggable object
-    draggable.draw(screen)
+    water_draggable.draw(screen)
+    milk_draggable.draw(screen)
 
     # Update the display
     pygame.display.update()
