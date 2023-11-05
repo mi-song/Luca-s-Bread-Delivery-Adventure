@@ -33,8 +33,6 @@ for img_path in additional_images:
 current_index = 0
 stop_cycling = False
 
-flour_rect = flour_image.get_rect(topleft=(700, 100))
-
 # A simple function to draw the additional image at a fixed position
 def draw_additional_image(surface, index, position=(300, 300)):
     surface.blit(additional_surfaces[index], position)
@@ -42,27 +40,14 @@ def draw_additional_image(surface, index, position=(300, 300)):
 
 # 드래그 가능한 객체 클래스
 class Draggable:
-    def __init__(self, image_path, drop_image_path, collide_image_path, x, y, width, height, obj_type):
-        self.offset_x = None
-        print(f"Width: {width}, Height: {height}")
-        self.type = obj_type
-        try:
-            self.original_image = pygame.transform.scale(pygame.image.load(image_path), (width, height))
-        except Exception as e:
-            print(f"Error loading original image: {e}")
-            self.original_image = None
-
-        self.drop_image = pygame.transform.scale(pygame.image.load(drop_image_path), (width, height))
-        # Load the collide image if a path is provided
-        # self.collide_image = None
-        if collide_image_path is not None:
-            self.collide_image = pygame.transform.scale(pygame.image.load(collide_image_path), (width, height))
-        else:
-            self.collide_image = None
-
+    def __init__(self, image_path, drop_image_path, x, y, width, height):
+        original_image = pygame.image.load(image_path)
+        self.original_image = pygame.transform.scale(original_image, (width, height))
+        drop_image = pygame.image.load(drop_image_path)
+        self.drop_image = pygame.transform.scale(drop_image, (width, height))
         self.image = self.original_image
         self.rect = self.image.get_rect(topleft=(x, y))
-        self.original_pos = (x, y)
+        self.original_pos = (x, y)  # 원래 위치 저장
         self.dragging = False
         self.dropped = False
         self.drop_time = 0
@@ -70,16 +55,11 @@ class Draggable:
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
+                # 드래그 상태가 아니고, 드롭된 상태에서 클릭했을 때, 원래 이미지와 위치로 복귀
                 if not self.dragging and self.dropped:
                     self.change_image(self.original_image)
                     self.rect.topleft = self.original_pos
                     self.dropped = False
-
-                # self.dragging = True
-                # mouse_x, mouse_y = event.pos
-                # self.offset_x = self.rect.x - mouse_x
-                # self.offset_y = self.rect.y - mouse_y
-
                 # 드래그 시작
                 else:
                     self.dragging = True
@@ -87,37 +67,31 @@ class Draggable:
                     self.offset_x = self.rect.x - mouse_x
                     self.offset_y = self.rect.y - mouse_y
 
-        elif event.type == pygame.MOUSEBUTTONUP:
-            if self.dragging:
-                self.dragging = False
-                self.dropped = True
-                if self.type == 'spoon':
-                    self.image = self.original_image  # Revert to the original image
-                    self.rect.topleft = self.original_pos  # Reset to the original position
-                else:
-                    pass
-                self.drop_time = pygame.time.get_ticks()
-                self.change_image(self.drop_image)
+        elif event.type == pygame.MOUSEBUTTONUP and self.dragging:
+            # 드래그 종료
+            self.dragging = False
+            self.dropped = True
+            self.drop_time = pygame.time.get_ticks()
+            self.change_image(self.drop_image)
 
         elif event.type == pygame.MOUSEMOTION and self.dragging:
+            # 드래그 중 이미지 이동
             mouse_x, mouse_y = event.pos
             self.rect.x = mouse_x + self.offset_x
             self.rect.y = mouse_y + self.offset_y
-            if self.rect.colliderect(flour_rect):
-                self.image = self.collide_image  # Change to the spoon with powder image
-
-    def draw(self, surface):
-        if self.image is not None:
-            surface.blit(self.image, self.rect)
 
     def change_image(self, new_image):
         self.image = new_image
 
+    def draw(self, surface):
+        surface.blit(self.image, self.rect)
 
-water_draggable = Draggable(water_image_path, pouring_water_image_path, None, 200, 200, 100, 100, 'water')
-milk_draggable = Draggable(milk_image_path, pouring_milk_image_path, None, 50, 50, 100, 100, 'milk')
-spoon_draggable = Draggable(spoon_image_path, spoon_image_path, spoon_with_powder_image_path, 120, 120, 100, 100, 'spoon')
 
+# 드래그 객체 생성 (원본 이미지와 드롭 이미지 경로를 제공)
+
+
+water_draggable = Draggable(water_image_path, pouring_water_image_path, 100, 100, 100, 100)
+milk_draggable = Draggable(milk_image_path, pouring_milk_image_path, 50, 50, 100, 100)
 
 # Timer for changing the additional image
 change_image_event = pygame.USEREVENT + 1
@@ -143,7 +117,6 @@ while running:
 
         water_draggable.handle_event(event)
         milk_draggable.handle_event(event)
-        spoon_draggable.handle_event(event)
 
     # If the Draggable object is dropped and the timer is not already set, start the timer
     if water_draggable.dropped and not stop_cycling and not timer_set:
@@ -168,16 +141,12 @@ while running:
     # Fill the screen with white color
     screen.fill((255, 255, 255))
 
-    # Draw the flour image
-    screen.blit(flour_image, flour_rect)
-
     # Draw the additional image
     draw_additional_image(screen, current_index)
 
-    # Draw the draggable objects
+    # Draw the draggable object
     water_draggable.draw(screen)
     milk_draggable.draw(screen)
-    spoon_draggable.draw(screen)  # Draw the spoon draggable
 
     # Update the display
     pygame.display.update()
