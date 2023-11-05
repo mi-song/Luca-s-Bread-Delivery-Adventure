@@ -63,6 +63,7 @@ class Draggable:
         self.original_pos = (x, y)
         self.dragging = False
         self.dropped = False
+        self.drop_time = 0
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
