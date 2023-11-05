@@ -1,6 +1,7 @@
 import os
 import pygame
 
+
 image_folder_path = "C:/Users/82103/Desktop/pygame/assets"
 
 """
