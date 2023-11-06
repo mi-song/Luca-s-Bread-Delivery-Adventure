@@ -17,9 +17,16 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Drag & Drop and Change Image Demo")
 
 # Additional images list
-a1 = 'C:/Users/82103/Desktop/pygame/assets/크루와상 반죽_.png'
-a2 = 'C:/Users/82103/Desktop/pygame/assets/크루와상_.png'
-a3 = 'C:/Users/82103/Desktop/pygame/assets/크루와상2_.png'
+a1 = 'C:/Users/Main/Desktop/배경제거/크루와상 반죽_.png'
+a2 = 'C:/Users/Main/Desktop/배경제거/크루와상_.png'
+a3 = 'C:/Users/Main/Desktop/배경제거/크루와상2_.png'
+
+empty_pot = pygame.image.load('C:/Users/Main/Desktop/배경제거/냄비1.png').convert_alpha()  # 빈 냄비 이미지
+full_pot = pygame.image.load('C:/Users/Main/Desktop/배경제거/물냄비1.png').convert_alpha()  # 물이 찬 냄비 이미지
+
+# 초기 알파 값 설정
+alpha_value = 0
+full_pot.set_alpha(alpha_value)
 
 additional_images = [a1, a2, a3]  # etc.
 additional_surfaces = []
@@ -125,6 +132,8 @@ change_image_event = pygame.USEREVENT + 1
 # Flag to indicate if the timer is set
 timer_set = False
 
+pot_filled = False
+
 # Game loop
 running = True
 while running:
@@ -150,6 +159,13 @@ while running:
         pygame.time.set_timer(change_image_event, 1500)
         timer_set = True
 
+    # 물이 드롭되었는지 확인
+    if water_draggable.dropped:
+        # 물 채우기 효과
+        if alpha_value < 255:
+            alpha_value += 1  # 알파 값을 서서히 증가
+            full_pot.set_alpha(alpha_value)
+
     # If the Draggable object has been reset, stop the timer
     if not water_draggable.dragging and not water_draggable.dropped and timer_set:
         pygame.time.set_timer(change_image_event, 0)
@@ -170,6 +186,11 @@ while running:
 
     # Draw the flour image
     screen.blit(flour_image, flour_rect)
+    screen.blit(empty_pot, (0, 0))
+
+    # 물이 찬 냄비 이미지를 알파값과 함께 그림 (물이 채워지는 효과)
+    if water_draggable.dropped:
+        screen.blit(full_pot, (0, 0))
 
     # Draw the additional image
     draw_additional_image(screen, current_index)
@@ -181,6 +202,9 @@ while running:
 
     # Update the display
     pygame.display.update()
+
+    # fps 조절
+    pygame.time.Clock().tick(60)
 
 # Quit Pygame
 pygame.quit()

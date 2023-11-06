@@ -11,8 +11,8 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 # 이미지 로드
 
 
-empty_pot = pygame.image.load('C:/Users/82103/Desktop/pygame/assets/냄비1.png').convert_alpha()  # 빈 냄비 이미지
-full_pot = pygame.image.load('C:/Users/82103/Desktop/pygame/assets/물냄비1.png').convert_alpha()  # 물이 찬 냄비 이미지
+empty_pot = pygame.image.load('C:/Users/Main/Desktop/배경제거/냄비1.png').convert_alpha()  # 빈 냄비 이미지
+full_pot = pygame.image.load('C:/Users/Main/Desktop/배경제거/물냄비1.png').convert_alpha()  # 물이 찬 냄비 이미지
 
 # 초기 알파 값 설정
 alpha_value = 0
