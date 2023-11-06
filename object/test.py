@@ -165,6 +165,8 @@ while running:
         if alpha_value < 255:
             alpha_value += 1  # 알파 값을 서서히 증가
             full_pot.set_alpha(alpha_value)
+        else:
+            pot_filled = True
 
     # If the Draggable object has been reset, stop the timer
     if not water_draggable.dragging and not water_draggable.dropped and timer_set:
@@ -186,10 +188,12 @@ while running:
 
     # Draw the flour image
     screen.blit(flour_image, flour_rect)
-    screen.blit(empty_pot, (0, 0))
+
+    if pot_filled == False:
+        screen.blit(empty_pot, (0, 0))
 
     # 물이 찬 냄비 이미지를 알파값과 함께 그림 (물이 채워지는 효과)
-    if water_draggable.dropped:
+    if water_draggable.dropped or pot_filled == True:
         screen.blit(full_pot, (0, 0))
 
     # Draw the additional image
