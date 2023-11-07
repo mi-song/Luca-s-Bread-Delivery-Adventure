@@ -21,8 +21,9 @@ a1 = 'C:/Users/Main/Desktop/배경제거/크루와상 반죽_.png'
 a2 = 'C:/Users/Main/Desktop/배경제거/크루와상_.png'
 a3 = 'C:/Users/Main/Desktop/배경제거/크루와상2_.png'
 
-empty_pot = pygame.image.load('C:/Users/Main/Desktop/배경제거/냄비1.png').convert_alpha()  # 빈 냄비 이미지
-full_pot = pygame.image.load('C:/Users/Main/Desktop/배경제거/물냄비1.png').convert_alpha()  # 물이 찬 냄비 이미지
+empty_pot = pygame.image.load('C:/Users/Main/Desktop/배경제거/빈냄비_.png').convert_alpha()  # 빈 냄비 이미지
+full_pot = pygame.image.load('C:/Users/Main/Desktop/배경제거/물냄비_.png').convert_alpha()  # 물이 찬 냄비 이미지
+flour_pot = pygame.image.load('C:/Users/Main/Desktop/배경제거/밀가루냄비_.png').convert_alpha()  # 밀가루
 
 # 초기 알파 값 설정
 alpha_value = 0
