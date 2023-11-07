@@ -13,6 +13,10 @@ screen_width = 800
 screen_height = 600
 screen = pygame.display.set_mode((screen_width, screen_height))
 
+# 이미지 변경 플래그와 충돌 시작 시간 변수
+image_changed = False
+collision_start_time = None
+
 # 게임 제목 설정
 pygame.display.set_caption("Drag & Drop and Change Image Demo")
 
@@ -65,6 +69,7 @@ class Draggable:
         # self.collide_image = None
         if collide_image_path is not None:
             self.collide_image = pygame.transform.scale(pygame.image.load(collide_image_path), (width, height))
+
         else:
             self.collide_image = None
 
@@ -73,7 +78,10 @@ class Draggable:
         self.original_pos = (x, y)
         self.dragging = False
         self.dropped = False
+        self.spoondropped = False
         self.drop_time = 0
+
+
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -100,6 +108,7 @@ class Draggable:
                 self.dragging = False
                 self.dropped = True
                 if self.type == 'spoon':
+                    self.spoondropped = True
                     self.image = self.original_image  # Revert to the original image
                     self.rect.topleft = self.original_pos  # Reset to the original position
                 else:
@@ -135,6 +144,10 @@ timer_set = False
 
 pot_filled = False
 
+# 드래그 관련 변수
+dragging = False
+dragged_object = None
+
 # Game loop
 running = True
 while running:
@@ -164,7 +177,7 @@ while running:
     if water_draggable.dropped:
         # 물 채우기 효과
         if alpha_value < 255:
-            alpha_value += 1  # 알파 값을 서서히 증가
+            alpha_value += 1.5  # 알파 값을 서서히 증가
             full_pot.set_alpha(alpha_value)
         else:
             pot_filled = True
@@ -196,6 +209,10 @@ while running:
     # 물이 찬 냄비 이미지를 알파값과 함께 그림 (물이 채워지는 효과)
     if water_draggable.dropped or pot_filled == True:
         screen.blit(full_pot, (0, 0))
+
+    if spoon_draggable.spoondropped == True:
+        screen.blit(flour_pot, (0, 0))
+
 
     # Draw the additional image
     draw_additional_image(screen, current_index)

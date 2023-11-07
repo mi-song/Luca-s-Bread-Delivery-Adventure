@@ -10,6 +10,9 @@ image path
 
 #### ingredient ####
 
+pot_image_path = 'C:/Users/Main/Desktop/배경제거/밀가루냄비_.png'
+
+stick_image_path = os.path.join(image_folder_path, "막대기.png")
 one_butter_image_path = os.path.join(image_folder_path, "낱개버터_.png")
 butter_image_path = os.path.join(image_folder_path, "버터통_.png")
 
